@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -109,8 +110,7 @@ public class NumberTriangle {
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
-        // TODO define any variables that you want to use to store things
+        ArrayList<NumberTriangle> prevTriangles = new ArrayList<>();
 
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
@@ -118,11 +118,27 @@ public class NumberTriangle {
 
         String line = br.readLine();
         while (line != null) {
-
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
-
-            // TODO process the line
+            String[] parts = line.split(" ");
+            if (parts.length == 1) {
+                top = new NumberTriangle(Integer.parseInt(parts[0]));
+                prevTriangles.add(top);
+            } else {
+                int length = parts.length;
+                ArrayList<NumberTriangle> currTriangles = new ArrayList<>();
+                NumberTriangle leftmostTriangle = new NumberTriangle(Integer.parseInt(parts[0]));
+                prevTriangles.get(0).setLeft(leftmostTriangle);
+                currTriangles.add(leftmostTriangle);
+                for (int i = 0; i < length - 2; i++) {
+                    NumberTriangle newTriangle = new NumberTriangle(Integer.parseInt(parts[i + 1]));
+                    prevTriangles.get(i).setRight(newTriangle);
+                    prevTriangles.get(i + 1).setLeft(newTriangle);
+                    currTriangles.add(newTriangle);
+                }
+                NumberTriangle rightmostTriangle = new NumberTriangle(Integer.parseInt(parts[length - 1]));
+                prevTriangles.get(length - 2).setRight(rightmostTriangle);
+                currTriangles.add(rightmostTriangle);
+                prevTriangles = currTriangles;
+            }
 
             //read the next line
             line = br.readLine();
